@@ -1,24 +1,22 @@
 import 'package:daedalus/data/facility_data.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:daedalus/models/facility_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:daedalus/utils/location_utils.dart';
 import 'dart:async';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
+import 'package:daedalus/utils/view_utils.dart';
 
 class MapPage extends StatefulWidget {
-  List<Facility> facilities;
+  final List<Facility> facilities;
 
   MapPage({Key? key, required this.facilities}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
 }
-
-final PopupController _popupLayerController = PopupController();
 
 class _MapPageState extends State<MapPage> {
   double defaultZoom = 13.0;
@@ -32,40 +30,27 @@ class _MapPageState extends State<MapPage> {
   late ScrollController _scrollController;
   late MapController _mapController;
 
-  late List<String> facilityTexts;
-  late List<Color> facilityColors;
-  String safeText =
-      "Lead presence is below the 2020 EPA limit for housing and child occupied facilities.\n\nVery low risk of transferring lead contamination away from the workplace.";
-  String lowText =
-      "Lead presence is below the 2001 EPA limit for housing and child occupied facilities.\n\nWash hands and follow good personal hygiene habits following onsite activities. Low risk of transferring lead contamination away from the workplace.";
-  String mediumText =
-      "Lead presence is below the OSHA limit for contaminated workplaces.\n\nWash hands and follow good personal hygiene habits following onsite activities. Follow all required housekeeping procedures and ensure break areas are clean and sanitary. Medium risk of transferring lead contamination away from the workplace.";
-  String highText =
-      "Lead presence is above OSHA limit for maintaining a clean and sanitary break areas away from ongoing onsite activities.\n\nInquire with facility coordinator on measures to lower the risk of lead contamination. Follow all required housekeeping procedures. High risk of transferring lead contamination away from the workplace.";
-
   List<Facility> facilities = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      _updateUserLocation();
+    });
+  }
 
   void _updateUserLocation() async {
     try {
-      await determinePosition().then((pos) {
+      await getUserLocation().then((loc) {
         // do not wrap in setstate
-        userLocation = LatLng(pos.latitude, pos.longitude);
+        userLocation = LatLng(loc.latitude, loc.longitude);
         print(userLocation);
       });
     }
     catch(e) {
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    facilityTexts = [safeText, lowText, mediumText, highText];
-    facilityColors = [Colors.green, Colors.green, Colors.green, Colors.orange];
-    _scrollController = ScrollController();
-    Timer.periodic(Duration(seconds: 5), (timer) {
-      _updateUserLocation();
-    });
   }
 
   void _onMarkerTapped(int index) {
@@ -125,56 +110,6 @@ class _MapPageState extends State<MapPage> {
         LatLng(facilities[index].lat, facilities[index].long), zoom);
   }
 
-  Widget buildFacility(Facility facility, int index) => SizedBox(
-        height: itemSize,
-        child: ListTile(
-            selected: index == _selectedIndex,
-            onTap: () {
-              setState(() {
-                _zoomCamera(index, 15.0);
-                _selectedIndex = index;
-              });
-            },
-            selectedTileColor: Colors.blueGrey.shade100.withOpacity(0.25),
-            selectedColor: Colors.black,
-            horizontalTitleGap: 12,
-            leading: IconButton(
-              iconSize: 45,
-              icon: facility.leadSeverity < 3
-                  ? const FaIcon(FontAwesomeIcons.circleCheck,
-                      color: Colors.green)
-                  : const FaIcon(FontAwesomeIcons.circleExclamation,
-                      color: Colors.amber),
-              onPressed: () => _showGuidelines(index),
-            ),
-            title: Text(facility.siteName,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w500,
-                )),
-            subtitle: Text(
-              '${facility.city}, ${facility.state}',
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              style: TextStyle(fontSize: 14.0, color: Colors.grey.shade600),
-            ),
-            trailing: IconButton(
-                iconSize: 20,
-                icon: const FaIcon(FontAwesomeIcons.fileLines,
-                    color: Colors.grey),
-                onPressed: () {
-                  /*
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FacilityPage(facility: facility)),
-                  );*/
-                  _showGuidelines(index);
-                })),
-      );
-
   void _showGuidelines(index) {
     Facility facility = facilities[index];
     showDialog<String>(
@@ -209,32 +144,25 @@ class _MapPageState extends State<MapPage> {
             ));
   }
 
+  @override
   Widget build(BuildContext context) {
     facilities = widget.facilities;
     if (markers.isEmpty && facilities.isNotEmpty) {
       _addMarkers(facilities);
     }
     var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          toolbarHeight: 50,
-          title: const Text("",
-              style: TextStyle(color: Colors.black54, fontSize: 16.0)),
-          /* leading: IconButton(
-      iconSize: 24.0,
-      icon: const Icon(Icons.search, color: Colors.black54),
-      onPressed: () => {
-      // TODO: What to do when Search button is pressed?
-      },
-    ), */
-          backgroundColor: Colors.white,
-          elevation: 5.0,
+          toolbarHeight: 0,
+          backgroundColor: HexColor("#676d42"),
+          elevation: 0.0,
         ),
         body: Column(
           children: [
             Expanded(
               flex: 1,
-              child: facilities.isEmpty ? Center(child: CircularProgressIndicator()) : FlutterMap(
+              child: facilities.isEmpty ? const Center(child: CircularProgressIndicator()) : FlutterMap(
                 options: MapOptions(
                   onMapCreated: (controller) {
                     _mapController = controller;
@@ -251,52 +179,91 @@ class _MapPageState extends State<MapPage> {
                 ],
               ),
             ),
+            const Divider(thickness: 1, height: 1),
             Expanded(
               flex: 1,
-              child: facilities.isEmpty ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: const [
-                      PlaceholderLines(
-                        count: 3,
-                        align: TextAlign.center,
-                        animate:true,
-                      ),
-                      Divider(
-                        indent: 20,
-                        thickness: 1,
-                        endIndent: 20,
-                      ),
-                      PlaceholderLines(
-                        count: 3,
-                        align: TextAlign.center,
-                        animate:true,
-                      ),
-                      Divider(
-                        indent: 20,
-                        thickness: 1,
-                        endIndent: 20,
-                      ),
-                      PlaceholderLines(
-                        count: 3,
-                        align: TextAlign.center,
-                        animate:true,
-                      ),
-                    ],
-                  ),
-                ),
-              ) : Container(
-                  width: width,
-                  child:  ListView.builder(
-                      controller: _scrollController,
-                      itemCount: facilities.length,
-                      itemBuilder: (context, index) {
-                        final facility = facilities[index];
-                        return buildFacility(facility, index);
-                      })),
-            ),
-          ],
+              child: facilities.isEmpty ? _buildPlaceholderList() : _buildList())
+          ]
         ));
+  }
+
+  Widget _buildTile(Facility facility, int index) => SizedBox(
+    height: itemSize,
+    child: ListTile(
+        selected: index == _selectedIndex,
+        onTap: () {
+          setState(() {
+            _zoomCamera(index, 15.0);
+            _selectedIndex = index;
+          });
+        },
+        selectedTileColor: Colors.blueGrey.shade100.withOpacity(0.25),
+        selectedColor: Colors.black,
+        horizontalTitleGap: 12,
+        leading: IconButton(
+          iconSize: 45,
+          icon: facility.leadSeverity < 3
+              ? const FaIcon(FontAwesomeIcons.circleCheck,
+              color: Colors.green)
+              : const FaIcon(FontAwesomeIcons.circleExclamation,
+              color: Colors.amber),
+          onPressed: () => _showGuidelines(index),
+        ),
+        title: Text(facility.siteName,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+            )),
+        subtitle: Text(
+          '${facility.city}, ${facility.state}',
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          style: TextStyle(fontSize: 14.0, color: Colors.grey.shade600),
+        ),
+        trailing: IconButton(
+            iconSize: 20,
+            icon: const FaIcon(FontAwesomeIcons.fileLines,
+                color: Colors.grey),
+            onPressed: () {
+              /*
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FacilityPage(facility: facility)),
+                  );*/
+              _showGuidelines(index);
+            })),
+  );
+
+  Widget _buildList() {
+    return ListView.builder(
+        controller: _scrollController,
+        itemCount: facilities.length,
+        itemBuilder: (context, index) {
+          final facility = facilities[index];
+          return _buildTile(facility, index);
+        });
+  }
+
+  Widget _buildPlaceholderTile() => SizedBox(
+      height: itemSize,
+      child: const ListTile(
+          selectedColor: Colors.black,
+          horizontalTitleGap: 12,
+          contentPadding: EdgeInsets.symmetric(horizontal: 25),
+          leading: Icon(Icons.photo_rounded, size: 50),
+          title: PlaceholderLines(count: 1, animate: true),
+          subtitle: PlaceholderLines(count: 1, animate: true),
+          trailing: FaIcon(FontAwesomeIcons.chevronRight, color: Colors.grey, size: 20)));
+
+  Widget _buildPlaceholderList() {
+    return ListView.builder(
+        controller: _scrollController,
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return _buildPlaceholderTile();
+        });
   }
 }

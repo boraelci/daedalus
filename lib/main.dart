@@ -5,6 +5,7 @@ import 'package:daedalus/pages/settings_page.dart';
 import 'package:daedalus/pages/search_page.dart';
 import 'package:daedalus/utils/location_utils.dart';
 import 'package:daedalus/models/facility_model.dart';
+import 'package:daedalus/utils/view_utils.dart';
 
 void main() {
   runApp(MaterialApp(home: MainApp()));
@@ -23,10 +24,10 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
 
-    getLocationPermissions(context).then((value) {
-      localizeToUser().then((val) {
+    getLocationPermissions(context).then((permissionGranted) {
+      sortFacilities(permissionGranted).then((sorted) {
         setState(() {
-          facilities = val;
+          facilities = sorted;
         });
       });
     });
@@ -35,7 +36,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 3,
         child: Scaffold(
           body: TabBarView(
@@ -43,7 +44,7 @@ class _MainAppState extends State<MainApp> {
               //SearchPage(facilities: facilities),
               SearchPage(facilities: facilities),
               MapPage(facilities: facilities),
-              SettingsPage(),
+              const SettingsPage(),
             ],
           ),
           bottomNavigationBar: SizedBox(
@@ -63,16 +64,4 @@ class _MainAppState extends State<MainApp> {
         ),
       );
     }
-}
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

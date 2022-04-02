@@ -26,29 +26,28 @@ Future<bool> getLocationPermissions(context) async {
   return true;
 }
 
-Future<Position> determinePosition() async {
+Future<Position> getUserLocation() async {
   bool serviceEnabled;
   LocationPermission permission;
-
-  // Geolocator.openLocationSettings();
 
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     return Future.error('Location services are disabled.');
   }
   permission = await Geolocator.checkPermission();
-  if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+  if (permission != LocationPermission.denied &&
+      permission != LocationPermission.deniedForever) {
     var result;
-    try{
-      result = Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high, timeLimit: Duration(seconds: 5));
-    }
-    catch (e) {
+    try {
+      result = Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 5));
+    } catch (e) {
       try {
         result = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.low,
             timeLimit: Duration(seconds: 5));
-      }
-      catch (e) {
+      } catch (e) {
         return result;
       }
     }
@@ -61,39 +60,40 @@ void showLocationSettings(context) {
   showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text("Location permissions not enabled!"),
-        content: Text(
-            "Please enable location services and allow location permissions for this app in your device settings. Please restart the app afterwards."),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, 'Settings');
-              Geolocator.openLocationSettings();
-            },
-            child: const Text('Go to Settings'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
-        ],
-      ));
+            title: const Text("Location permissions not enabled!"),
+            content: const Text(
+                "Please enable location services and allow location permissions for this app in your device settings. Please restart the app afterwards."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, 'Settings');
+                  Geolocator.openLocationSettings();
+                },
+                child: const Text('Go to Settings'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text('OK'),
+              ),
+            ],
+          ));
 }
 
-Future<List<Facility>> localizeToUser() async {
+Future<List<Facility>> sortFacilities(permissionGranted) async {
   List<Facility> facilities = [...allFacilities];
-  try {
-    await determinePosition().then((pos) {
-      facilities.sort((a, b) {
-        double distanceForA = Geolocator.distanceBetween(
-            pos.latitude, pos.longitude, a.lat, a.long);
-        double distanceForB = Geolocator.distanceBetween(
-            pos.latitude, pos.longitude, b.lat, b.long);
-        return distanceForA.compareTo(distanceForB);
+  if (permissionGranted == true) {
+    try {
+      await getUserLocation().then((pos) {
+        facilities.sort((a, b) {
+          double distanceForA = Geolocator.distanceBetween(
+              pos.latitude, pos.longitude, a.lat, a.long);
+          double distanceForB = Geolocator.distanceBetween(
+              pos.latitude, pos.longitude, b.lat, b.long);
+          return distanceForA.compareTo(distanceForB);
+        });
       });
-    });
-    return facilities;
-  } catch (e) {
-    return facilities;
+    } catch (e) {
+    }
   }
+  return facilities;
 }

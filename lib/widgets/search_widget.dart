@@ -4,12 +4,14 @@ class SearchWidget extends StatefulWidget {
   final String text;
   final ValueChanged<String> onChanged;
   final String hintText;
+  final bool enabled;
 
   const SearchWidget({
     Key? key,
     required this.text,
     required this.onChanged,
     required this.hintText,
+    required this.enabled,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: TextField(
+        enabled: widget.enabled,
         controller: controller,
         decoration: InputDecoration(
           icon: Icon(Icons.search, color: style.color),
