@@ -1,7 +1,10 @@
+import 'package:daedalus/data/facility_data.dart';
 import 'package:flutter/material.dart';
 import 'package:daedalus/pages/map_page.dart';
 import 'package:daedalus/pages/settings_page.dart';
 import 'package:daedalus/pages/search_page.dart';
+import 'package:daedalus/utils/location_utils.dart';
+import 'package:daedalus/models/facility_model.dart';
 
 void main() {
   runApp(MaterialApp(home: MainApp()));
@@ -14,103 +17,62 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  late List<Widget> originalList;
-  late Map<int, bool> originalDic;
-  late List<Widget> listScreens;
-  late List<int> listScreensIndex;
-
-  int tabIndex = 0;
-  Color tabColor = Colors.grey;
-  Color selectedTabColor = Colors.black;
+  List<Facility> facilities = [];
 
   @override
   void initState() {
     super.initState();
 
-    originalList = [
-      SearchPage(),
-      MapPage(),
-      const SettingsPage(),
-    ];
-    originalDic = {0: true, 1: false, 2: false};
-    listScreens = [originalList.first];
-    listScreensIndex = [0];
-
-    _selectedTab(1);
+    getLocationPermissions(context).then((value) {
+      localizeToUser().then((val) {
+        setState(() {
+          facilities = val;
+        });
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: IndexedStack(index:listScreensIndex.indexOf(tabIndex), children: listScreens),
-        bottomNavigationBar: _buildTabBar(),
-      ),
-    );
-  }
-
-  void _selectedTab(int index) {
-    if (originalDic[index] == false) {
-      listScreensIndex.add(index);
-      originalDic[index] = true;
-      listScreensIndex.sort();
-      listScreens = listScreensIndex.map((index) {
-        return originalList[index];
-      }).toList();
-    }
-
-    setState(() {
-      tabIndex = index;
-    });
-  }
-
-  Widget _buildTabBar() {
-    var listItems = [
-      BottomAppBarItem(iconData: Icons.search_rounded, text: ''),
-      BottomAppBarItem(iconData: Icons.map_rounded, text: ''),
-      BottomAppBarItem(iconData: Icons.person_rounded, text: ''),
-    ];
-
-    var items = List.generate(listItems.length, (int index) {
-      return _buildTabItem(
-        item: listItems[index],
-        index: index,
-        onPressed: _selectedTab,
-      );
-    });
-
-    return BottomAppBar(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: items,
-      ),
-    );
-  }
-
-  Widget _buildTabItem({
-    required BottomAppBarItem item,
-    required int index,
-    required ValueChanged<int> onPressed,
-  }) {
-    var color = tabIndex == index ? selectedTabColor : tabColor;
-    return Expanded(
-      child: SizedBox(
-        height: 50,
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            onTap: () => onPressed(index),
-            child: Icon(item.iconData, color: color, size: 24),
+    return DefaultTabController(
+        initialIndex: 1,
+        length: 3,
+        child: Scaffold(
+          body: TabBarView(
+            children: [
+              //SearchPage(facilities: facilities),
+              SearchPage(facilities: facilities),
+              MapPage(facilities: facilities),
+              SettingsPage(),
+            ],
+          ),
+          bottomNavigationBar: SizedBox(
+            height: 50,
+            child: AppBar(
+              backgroundColor: HexColor("#676d42"),
+              bottom: TabBar(
+                indicatorColor: HexColor("#dfe0d6"),
+                tabs: const [
+                  Tab(icon: Icon(Icons.search_rounded)),
+                  Tab(icon: Icon(Icons.map_rounded)),
+                  Tab(icon: Icon(Icons.info_rounded)),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 }
 
-class BottomAppBarItem {
-  BottomAppBarItem({required this.iconData, required this.text});
-  IconData iconData;
-  String text;
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
