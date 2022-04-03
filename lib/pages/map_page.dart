@@ -207,7 +207,13 @@ class _MapPageState extends State<MapPage> {
               color: Colors.green)
               : const FaIcon(FontAwesomeIcons.circleExclamation,
               color: Colors.amber),
-          onPressed: () => _showGuidelines(index),
+          onPressed: () {
+            setState(() {
+              _zoomCamera(index, 15.0);
+              _selectedIndex = index;
+            });
+            _showGuidelines(index);
+          }
         ),
         title: Text(facility.siteName,
             overflow: TextOverflow.fade,
@@ -224,7 +230,7 @@ class _MapPageState extends State<MapPage> {
         ),
         trailing: IconButton(
             iconSize: 20,
-            icon: const FaIcon(FontAwesomeIcons.fileLines,
+            icon: const FaIcon(FontAwesomeIcons.chevronRight,
                 color: Colors.grey),
             onPressed: () {
               /*
@@ -233,6 +239,10 @@ class _MapPageState extends State<MapPage> {
                     MaterialPageRoute(
                         builder: (context) => FacilityPage(facility: facility)),
                   );*/
+              setState(() {
+                _zoomCamera(index, 15.0);
+                _selectedIndex = index;
+              });
               _showGuidelines(index);
             })),
   );

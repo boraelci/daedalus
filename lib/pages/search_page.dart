@@ -135,7 +135,12 @@ class SearchPageState extends State<SearchPage> {
               color: Colors.green)
               : const FaIcon(FontAwesomeIcons.circleExclamation,
               color: Colors.amber),
-          onPressed: () => _showGuidelines(index),
+          onPressed: () {
+            setState(() {
+              _selectedIndex = index;
+            });
+            _showGuidelines(index);
+          }
         ),
         title: Text(facility.siteName,
             overflow: TextOverflow.fade,
@@ -152,7 +157,7 @@ class SearchPageState extends State<SearchPage> {
         ),
         trailing: IconButton(
             iconSize: 20,
-            icon: const FaIcon(FontAwesomeIcons.fileLines,
+            icon: const FaIcon(FontAwesomeIcons.chevronRight,
                 color: Colors.grey),
             onPressed: () {
               /*
@@ -161,6 +166,9 @@ class SearchPageState extends State<SearchPage> {
                 MaterialPageRoute(
                     builder: (context) => FacilityPage(facility: facility)),
               );*/
+              setState(() {
+                _selectedIndex = index;
+              });
               _showGuidelines(index);
             })),
   );
@@ -182,11 +190,6 @@ class SearchPageState extends State<SearchPage> {
   }
 
   void _searchFacility(String query) {
-    if (query == '') {
-      this.facilities = widget.facilities;
-      return;
-    }
-
     final facilities = widget.facilities.where((facility) {
       final searchLower = query.toLowerCase();
 

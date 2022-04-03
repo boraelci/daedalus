@@ -1,7 +1,7 @@
 import 'package:daedalus/data/facility_data.dart';
 import 'package:flutter/material.dart';
 import 'package:daedalus/pages/map_page.dart';
-import 'package:daedalus/pages/settings_page.dart';
+import 'package:daedalus/pages/about_page.dart';
 import 'package:daedalus/pages/search_page.dart';
 import 'package:daedalus/utils/location_utils.dart';
 import 'package:daedalus/models/facility_model.dart';
@@ -36,7 +36,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        initialIndex: 0,
+        initialIndex: 2,
         length: 3,
         child: Scaffold(
           body: TabBarView(
@@ -44,7 +44,7 @@ class _MainAppState extends State<MainApp> {
               //SearchPage(facilities: facilities),
               SearchPage(facilities: facilities),
               MapPage(facilities: facilities),
-              const SettingsPage(),
+              AboutPage(),
             ],
           ),
           bottomNavigationBar: SizedBox(
