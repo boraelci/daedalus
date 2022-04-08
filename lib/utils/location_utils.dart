@@ -97,3 +97,22 @@ Future<List<Facility>> sortFacilities(permissionGranted) async {
   }
   return facilities;
 }
+
+Future<List<dynamic>> getClosestFacility() async {
+  List<Facility> facilities = [...allFacilities];
+  try {
+    var pos = await getUserLocation();
+    facilities.sort((a, b) {
+      double distanceForA = Geolocator.distanceBetween(
+          pos.latitude, pos.longitude, a.lat, a.long);
+      double distanceForB = Geolocator.distanceBetween(
+          pos.latitude, pos.longitude, b.lat, b.long);
+      return distanceForA.compareTo(distanceForB);
+    });
+    var facility = facilities[0];
+    var distance = Geolocator.distanceBetween(pos.latitude, pos.longitude, facility.lat, facility.long);
+    return [distance, facility];
+  } catch(e) {
+    return [];
+  }
+}

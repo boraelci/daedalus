@@ -35,9 +35,10 @@ class SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    /*
     Timer.periodic(Duration(seconds: 7), (timer) {
       _updateUserLocation();
-    });
+    });*/
   }
 
   void _updateUserLocation() async {

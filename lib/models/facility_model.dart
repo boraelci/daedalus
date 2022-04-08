@@ -7,6 +7,8 @@ class Facility {
     required this.long,
     required this.city,
     required this.state,
+    required this.address,
+    required this.installationName,
     required this.leadSeverity,
   });
 
@@ -16,6 +18,8 @@ class Facility {
   final double long;
   final String city;
   final String state;
+  final String address;
+  final String installationName;
   final int leadSeverity;
 
   Facility.fromJson(Map<String, dynamic> json)
@@ -25,5 +29,7 @@ class Facility {
         long = double.parse(json["long"]!),
         city = json["city"],
         state = json["state"],
+        address = json["address"],
+        installationName = json["installationName"],
         leadSeverity = int.parse(json["leadSeverity"]!);
 }

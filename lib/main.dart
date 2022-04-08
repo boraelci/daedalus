@@ -6,9 +6,47 @@ import 'package:daedalus/pages/search_page.dart';
 import 'package:daedalus/utils/location_utils.dart';
 import 'package:daedalus/models/facility_model.dart';
 import 'package:daedalus/utils/view_utils.dart';
+import 'package:workmanager/workmanager.dart';
+
+void callbackDispatcher() async {
+  Workmanager().executeTask((task, inputData) async {
+    List<dynamic> results = await getClosestFacility();
+    if (results.isNotEmpty) {
+      var distance = results[0];
+      var facility = results[1];
+      if (distance < 100) {
+        print("distance:");
+        print(distance);
+      }
+      else {
+        print('ho');
+      }
+    }
+    return Future.value(true);
+  });
+}
+
+
+void setupNotifications() {
+  Workmanager().initialize(
+      callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  );
+
+  Workmanager().registerOneOffTask(
+      "13",
+      "simpTask",
+      //frequency: Duration(minutes: 15),
+      initialDelay: Duration(seconds: 15),
+      existingWorkPolicy: ExistingWorkPolicy.replace,
+  );
+}
 
 void main() {
-  runApp(MaterialApp(home: MainApp()));
+  // WidgetsFlutterBinding.ensureInitialized();
+  runApp(MaterialApp(home: MainApp()));//
+  Workmanager().cancelAll();
+  setupNotifications();
 }
 
 class MainApp extends StatefulWidget {
@@ -36,7 +74,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        initialIndex: 2,
+        initialIndex: 1,
         length: 3,
         child: Scaffold(
           body: TabBarView(
