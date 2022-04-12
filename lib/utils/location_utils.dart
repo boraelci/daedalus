@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:daedalus/models/facility_model.dart';
 import 'package:flutter/material.dart';
 
+// This function is missing locationAlways permissions, so do not use
 Future<bool> getLocationPermissions(context) async {
   bool serviceEnabled;
   LocationPermission permission;
@@ -12,18 +13,27 @@ Future<bool> getLocationPermissions(context) async {
   }
 
   permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      showLocationSettings(context);
-      return false;
-    }
+
+  if (permission == LocationPermission.always) {
+    return true;
   }
-  if (permission == LocationPermission.deniedForever) {
+
+  else if (permission == LocationPermission.whileInUse) {
+    permission = await Geolocator.requestPermission();
+    showLocationSettings(context);
+    return true;
+  }
+
+  permission = await Geolocator.requestPermission();
+
+  if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
     showLocationSettings(context);
     return false;
   }
-  return true;
+  else if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+    return true;
+  }
+  else { return false; }
 }
 
 Future<Position> getUserLocation() async {
@@ -56,8 +66,9 @@ Future<Position> getUserLocation() async {
   return Future.error("Failed");
 }
 
-void showLocationSettings(context) {
+void showLocationSettings(context, {requestAlways = Geolocator.openLocationSettings}) {
   showDialog<String>(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => AlertDialog(
             title: const Text("Location permissions not enabled!"),
@@ -67,7 +78,7 @@ void showLocationSettings(context) {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context, 'Settings');
-                  Geolocator.openLocationSettings();
+                  requestAlways();
                 },
                 child: const Text('Go to Settings'),
               ),
@@ -79,9 +90,9 @@ void showLocationSettings(context) {
           ));
 }
 
-Future<List<Facility>> sortFacilities(permissionGranted) async {
+Future<List<Facility>> sortFacilities(permissionStatus) async {
   List<Facility> facilities = [...allFacilities];
-  if (permissionGranted == true) {
+  if (permissionStatus > 0) {
     try {
       await getUserLocation().then((pos) {
         facilities.sort((a, b) {

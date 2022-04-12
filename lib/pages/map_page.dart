@@ -40,10 +40,14 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-
+/*
     Timer.periodic(Duration(seconds: 5), (timer) {
       _updateUserLocation();
     });
+
+ */
+
+
   }
 
   void _updateUserLocation() async {
@@ -55,6 +59,20 @@ class _MapPageState extends State<MapPage> {
       });
     }
     catch(e) {
+    }
+    List<dynamic> results = await getClosestFacility();
+    print(results.length);
+    if (results.isNotEmpty) {
+      var distance = results[0];
+      var facility = results[1];
+      print("distance:");
+      print(distance);
+      if (distance < 2000) {
+        print('hi');
+      }
+      else {
+        print('ho');
+      }
     }
   }
 
