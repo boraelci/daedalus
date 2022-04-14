@@ -160,16 +160,15 @@ class SearchPageState extends State<SearchPage> {
             icon: const FaIcon(FontAwesomeIcons.chevronRight,
                 color: Colors.grey),
             onPressed: () {
-              /*
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => FacilityPage(facility: facility)),
-              );*/
-              setState(() {
-                _selectedIndex = index;
-              });
-              _showGuidelines(index);
+                    builder: (context) => FacilityPage(facility: facilities[index])),
+              );
+              // setState(() {
+              //   _selectedIndex = index;
+              // });
+              // _showGuidelines(index);
             })),
   );
 

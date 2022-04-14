@@ -5,6 +5,7 @@ class Facility {
     required this.siteName,
     required this.lat,
     required this.long,
+    required this.address,
     required this.city,
     required this.state,
     required this.leadSeverity,
@@ -14,6 +15,7 @@ class Facility {
   final String siteName;
   final double lat;
   final double long;
+  final String address;
   final String city;
   final String state;
   final int leadSeverity;
@@ -23,6 +25,7 @@ class Facility {
         siteName = json['siteName'],
         lat = double.parse(json["lat"]!),
         long = double.parse(json["long"]!),
+        address = json["address"],
         city = json["city"],
         state = json["state"],
         leadSeverity = int.parse(json["leadSeverity"]!);
