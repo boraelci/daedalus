@@ -14,7 +14,7 @@ class FacilityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {    
     final now = DateTime.now();
-    String formatter = DateFormat('yMd').format(now);
+    String formatter = DateFormat('yMd').format(now); //Change to Last Date Tested
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -45,10 +45,23 @@ class FacilityPage extends StatelessWidget {
             )
           ),
           Container(
-            margin: new EdgeInsets.only(bottom: 20.0),
+            margin: new EdgeInsets.only(left: 30.0, right: 30.0,),
             child:  Center(child: Text(
-               '${facility.city}, ${facility.state}'
+               '${facility.street}, ${facility.city}, ${facility.state}, ${facility.zip}'
               )
+            )
+          ),
+          Container(
+            // margin: new EdgeInsets.only(left: 30.0, right: 30.0, bottom: 20.0),
+            child:  Center(child: IconButton(
+                iconSize: 45,
+                icon: facility.leadSeverity < 3
+                    ? const FaIcon(FontAwesomeIcons.circleCheck,
+                    color: Colors.green)
+                    : const FaIcon(FontAwesomeIcons.circleExclamation,
+                    color: Colors.amber),
+                onPressed: null
+              ),
             )
           ),
           Container(
@@ -60,8 +73,9 @@ class FacilityPage extends StatelessWidget {
           Container(
             margin: new EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
             child:  Center(child: Text(
-              'Last tested on: ${formatter}',
-              style: TextStyle(color: facility.leadSeverity < 3 ? Colors.black : Colors.red)),
+              'Last tested on: ${formatter}', //<- current date atm, add proper last date
+              //style: TextStyle(color: facility.leadSeverity < 3 ? Colors.black : Colors.red)
+              ),
             )
           ),
           Container(
@@ -86,5 +100,3 @@ class FacilityPage extends StatelessWidget {
     );
   }
 }
-
-

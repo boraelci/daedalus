@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+
 class SafetyLinks extends StatelessWidget {
 
   const SafetyLinks({Key? key, }) : super(key: key);
@@ -29,43 +30,75 @@ class SafetyLinks extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           Container(
-            // height: 50,
-            margin: new EdgeInsets.only(top: 20.0),
-            child:  const Center(child: Text(
-               'To be implemented...'
-              )
-            )
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child:  TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://www.usar.army.mil/USARSafety/'),
+              ),
           ),
-          // Container(
-          //   margin: new EdgeInsets.only(bottom: 20.0),
-          //   child:  Center(child: Text(
-          //      '${facility.city}, ${facility.state}'
-          //     )
-          //   )
-          // ),
-          // Container(
-          //   margin: new EdgeInsets.symmetric(horizontal: 30.0),
-          //   child:  Center(child: Text(
-          //     '${facility.siteName} is ${facility.leadSeverity < 3 ? "within" : "above"} permissible limits. ${facilityTexts[facility.leadSeverity]}')
-          //   )
-          // ),
-          // Container(
-          //   margin: new EdgeInsets.symmetric(horizontal: 30.0),
-          //   child:  Center(child: TextButton(
-          //   style: ButtonStyle(
-          //     foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-          //   ),
-          //   onPressed: () {
-          //      Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => AboutPage()),
-          //     );
-          //   },
-          //   child: const Text('View Facility Safety Links'),
-          // ),
-          //   )
-          // )
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://xtranet/usarc/safety/default.aspx'),
+            ),
+          ),
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://safety.army.mil/ON-DUTY/Workplace/OSHA-Corner'),
+              ),
+          ),
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://phc.amedd.army.mil/topics/workplacehealth/ih/Pages/default.aspx'),
+              ),
+          ),
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://www.osha.gov/toxic-metals'),
+              ),
+          ),
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://www.cdc.gov/niosh/topics/default.html'),
+              ),
+          ),
+          Container(
+            margin: new EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
+                ),
+            onPressed: () {},
+            child: const Text('https://www.epa.gov/lead/learn-about-lead'),
+              ),
+          ),
         ],
       ),
     );
