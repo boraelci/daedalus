@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:daedalus/utils/location_utils.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:daedalus/utils/view_utils.dart';
+import 'package:daedalus/pages/facility_page.dart';
 
 class MapPage extends StatefulWidget {
   final List<Facility> facilities;
@@ -251,17 +252,16 @@ class _MapPageState extends State<MapPage> {
             icon: const FaIcon(FontAwesomeIcons.chevronRight,
                 color: Colors.grey),
             onPressed: () {
-              /*
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FacilityPage(facility: facility)),
-                  );*/
-              setState(() {
-                _zoomCamera(index, 15.0);
-                _selectedIndex = index;
-              });
-              _showGuidelines(index);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FacilityPage(facility: facilities[index])),
+              );
+              // setState(() {
+              //   _zoomCamera(index, 15.0);
+              //   _selectedIndex = index;
+              // });
+              // _showGuidelines(index);
             })),
   );
 
