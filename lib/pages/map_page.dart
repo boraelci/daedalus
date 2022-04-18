@@ -5,14 +5,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:daedalus/models/facility_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:daedalus/utils/location_utils.dart';
-import 'dart:async';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:daedalus/utils/view_utils.dart';
 
 class MapPage extends StatefulWidget {
   final List<Facility> facilities;
 
-  MapPage({Key? key, required this.facilities}) : super(key: key);
+  const MapPage({Key? key, required this.facilities}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -32,19 +31,25 @@ class _MapPageState extends State<MapPage> {
 
   List<Facility> facilities = [];
 
+  final leadSeverityThreshold = 3;
+  final numFacilitiesToDisplay = 10;
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+/*
     Timer.periodic(Duration(seconds: 5), (timer) {
       _updateUserLocation();
     });
+ */
+
   }
 
   void _updateUserLocation() async {
     try {
       await getUserLocation().then((loc) {
-        // do not wrap in setstate
+        // do not wrap in setState
         userLocation = LatLng(loc.latitude, loc.longitude);
         print(userLocation);
       });
@@ -61,32 +66,45 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  void _addMarkers(facilities) {
+  /*
+  void fixLocation() {
+    List<Location> locations = await locationFromAddress(
+        facility.address);
+    point = LatLng(locations[0].latitude, locations[0].longitude);
+  }*/
+
+  void _addMarkers(facilities) async {
     List<Marker> _markers = [];
     var counter = 0;
-    for (var facility in facilities) {
+    for (var facility in facilities.take(numFacilitiesToDisplay)) {
       final index = counter;
       try {
+        var point = LatLng(facility.lat, facility.long);
+        try {
+
+        } catch (e){
+          print(facility.address);
+          print("Coordinates from address could not be found");
+        }
         final Marker marker = Marker(
           width: 80.0,
           height: 80.0,
-          point: LatLng(facility.lat, facility.long),
-          builder: (ctx) => Container(
-              child: GestureDetector(
+          point: point,
+          builder: (ctx) => GestureDetector(
             onTap: () {
-              _onMarkerTapped(index);
+          _onMarkerTapped(index);
             },
             child: Container(
-              alignment: Alignment.center, // use aligment
-              child: Image.asset(
-                  facility.leadSeverity < 3
-                      ? 'assets/images/greenCircle256px_30br.png'
-                      : 'assets/images/orangeCircle256px_30br.png',
-                  height: 30,
-                  width: 30,
-                  fit: BoxFit.cover),
+          alignment: Alignment.center, // use alignment
+          child: Image.asset(
+              facility.leadSeverity < leadSeverityThreshold
+                  ? 'assets/images/greenCircle256px_30br.png'
+                  : 'assets/images/orangeCircle256px_30br.png',
+              height: 30,
+              width: 30,
+              fit: BoxFit.cover),
             ),
-          )),
+          ),
         );
         _markers.add(marker);
         counter += 1;
@@ -118,7 +136,7 @@ class _MapPageState extends State<MapPage> {
               title: Text.rich(TextSpan(
                 children: <TextSpan>[
                   TextSpan(
-                    text: facility.leadSeverity < 3 ? "Within" : "Above",
+                    text: facility.leadSeverity < leadSeverityThreshold ? "Within" : "Above",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: facilityColors[facility.leadSeverity]),
@@ -202,7 +220,7 @@ class _MapPageState extends State<MapPage> {
         horizontalTitleGap: 12,
         leading: IconButton(
           iconSize: 45,
-          icon: facility.leadSeverity < 3
+          icon: facility.leadSeverity < leadSeverityThreshold
               ? const FaIcon(FontAwesomeIcons.circleCheck,
               color: Colors.green)
               : const FaIcon(FontAwesomeIcons.circleExclamation,

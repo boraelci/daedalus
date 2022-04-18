@@ -1,4 +1,3 @@
-import 'package:daedalus/data/facility_data.dart';
 import 'package:flutter/material.dart';
 import 'package:daedalus/pages/map_page.dart';
 import 'package:daedalus/pages/about_page.dart';
@@ -8,10 +7,13 @@ import 'package:daedalus/models/facility_model.dart';
 import 'package:daedalus/utils/view_utils.dart';
 
 void main() {
-  runApp(MaterialApp(home: MainApp()));
+  // WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(home: MainApp()));
 }
 
 class MainApp extends StatefulWidget {
+
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   _MainAppState createState() => _MainAppState();
@@ -24,8 +26,11 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
 
-    getLocationPermissions(context).then((permissionGranted) {
-      sortFacilities(permissionGranted).then((sorted) {
+    getLocationPermissions(context).then((permissionStatus) {
+      sortFacilities(permissionStatus).then((sorted) {
+        if (permissionStatus > 1) { // meaning locationAlways enabled
+          setupGeolocationAlerts(sorted, radius: 100.0);
+        }
         setState(() {
           facilities = sorted;
         });
@@ -36,7 +41,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        initialIndex: 2,
+        initialIndex: 1,
         length: 3,
         child: Scaffold(
           body: TabBarView(
