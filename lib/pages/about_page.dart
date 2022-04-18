@@ -94,8 +94,7 @@ class AboutPageState extends State<AboutPage> {
                 body: const Padding(
                     padding: EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
                     child:
-                    Text(
-                      "Links from USARC Safety.",
+                    Text("Links for USARC Safety",
                       style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500
@@ -117,11 +116,11 @@ class AboutPageState extends State<AboutPage> {
                   );
                 },
                 body: Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
                     child:
                     Text(
                       licenseText,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500
                       ),
