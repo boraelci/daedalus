@@ -5,15 +5,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:daedalus/models/facility_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:daedalus/utils/location_utils.dart';
-import 'dart:async';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:daedalus/utils/view_utils.dart';
-import 'package:geocoding/geocoding.dart';
 
 class MapPage extends StatefulWidget {
   final List<Facility> facilities;
 
-  MapPage({Key? key, required this.facilities}) : super(key: key);
+  const MapPage({Key? key, required this.facilities}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -44,9 +42,7 @@ class _MapPageState extends State<MapPage> {
     Timer.periodic(Duration(seconds: 5), (timer) {
       _updateUserLocation();
     });
-
  */
-
 
   }
 
@@ -59,20 +55,6 @@ class _MapPageState extends State<MapPage> {
       });
     }
     catch(e) {
-    }
-    List<dynamic> results = await getClosestFacility();
-    print(results.length);
-    if (results.isNotEmpty) {
-      var distance = results[0];
-      var facility = results[1];
-      print("distance:");
-      print(distance);
-      if (distance < 2000) {
-        print('hi');
-      }
-      else {
-        print('ho');
-      }
     }
   }
 
