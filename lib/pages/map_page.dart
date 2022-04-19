@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
   List<Facility> facilities = [];
 
   final leadSeverityThreshold = 3;
-  final numFacilitiesToDisplay = 10;
+  final numFacilitiesToDisplay = 1000; // TODO CHANGE IN PROD
 
   @override
   void initState() {
@@ -268,7 +268,7 @@ class _MapPageState extends State<MapPage> {
   Widget _buildList() {
     return ListView.builder(
         controller: _scrollController,
-        itemCount: facilities.length,
+        itemCount: (numFacilitiesToDisplay < facilities.length) ? numFacilitiesToDisplay : facilities.length,
         itemBuilder: (context, index) {
           final facility = facilities[index];
           return _buildTile(facility, index);
