@@ -1,3 +1,4 @@
+import 'package:daedalus/pages/safety_links.dart';
 import 'package:flutter/material.dart';
 import 'package:daedalus/utils/view_utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +15,8 @@ class AboutPageState extends State<AboutPage> {
 
   String aboutText = "This application was developed in the Hacking 4 Defense course at Columbia University, facilitated by the National Security Innovation Network, sponsored by the Office of the Chief of Army Reserve, the Safety Directorate for US Army Reserve Command, and with support from the 75th Innovation Command.";
   String licenseText = "This application is distributed under the terms of The MIT License (MIT).\n\nCopyright (c) 2022 Bora Elci, David Cendejas, Jorge Mederos, Kerim Kurttepeli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+  double selectedFreq = 2;
+  List<String> notifFreqs = ["Off", "Weekly", "Daily", "Every 8 hours", "Every 4 hours", "Every hour",];
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +47,18 @@ class AboutPageState extends State<AboutPage> {
                 body: Padding(
                     padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
                     child:
-                    Text(
-                      "To be updated..",
-                      style: const TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500
-                      ),
-                    )
+                      Slider(
+                      value: selectedFreq,
+                      min: 0,
+                      max: 5,
+                      divisions: 5,
+                      label: notifFreqs[selectedFreq.round()],
+                      onChanged: (double value) {
+                        setState(() {
+                          selectedFreq = value;
+                        });
+                      },
+                    ),
                 ),
                 isExpanded: _isExpanded[0],
               ),
@@ -92,14 +100,9 @@ class AboutPageState extends State<AboutPage> {
                   );
                 },
                 body: const Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
-                    child:
-                    Text("Links for USARC Safety",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500
-                      ),
-                    )
+                  padding: EdgeInsets.only(left: 30.0, right: 30.0, top: 0.0, bottom: 25.0),
+                  child:
+                  SafetyLinks(),
                 ),
                 isExpanded: _isExpanded[2],
               ),

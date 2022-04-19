@@ -29,7 +29,7 @@ class _MainAppState extends State<MainApp> {
     getLocationPermissions(context).then((permissionStatus) {
       sortFacilities(permissionStatus).then((sorted) {
         if (permissionStatus > 1) { // meaning locationAlways enabled
-          setupGeolocationAlerts(sorted, radius: 100.0);
+          // setupGeolocationAlerts(sorted, radius: 100.0); COMMENTED FOR DEBUGGING
         }
         setState(() {
           facilities = sorted;

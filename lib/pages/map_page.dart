@@ -162,7 +162,6 @@ class _MapPageState extends State<MapPage> {
               ],
             ));
   }
-
   @override
   Widget build(BuildContext context) {
     facilities = widget.facilities;
@@ -252,16 +251,17 @@ class _MapPageState extends State<MapPage> {
             icon: const FaIcon(FontAwesomeIcons.chevronRight,
                 color: Colors.grey),
             onPressed: () {
+              setState(() {
+                _zoomCamera(index, 15.0);
+                _selectedIndex = index;
+              });
+              // _showGuidelines(index);
+              /*
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => FacilityPage(facility: facilities[index])),
-              );
-              // setState(() {
-              //   _zoomCamera(index, 15.0);
-              //   _selectedIndex = index;
-              // });
-              // _showGuidelines(index);
+              );*/
             })),
   );
 

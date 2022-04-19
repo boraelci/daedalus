@@ -1,108 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_placeholder_textlines/placeholder_lines.dart'
+;
 class SafetyLinks extends StatelessWidget {
+  const SafetyLinks({
+    Key? key,
+  }) : super(key: key);
 
-  const SafetyLinks({Key? key, }) : super(key: key);
+  void _launchURL(url) async {
+    if (!await launch(url)) throw 'Could not launch $url';
+  }
+
+  /*
+  Widget _buildPlaceholderTile() => const SizedBox(
+      height: 50,
+      child: ListTile(
+          selectedColor: Colors.black,
+          horizontalTitleGap: 12,
+          contentPadding: EdgeInsets.symmetric(horizontal: 25),
+          leading: Icon(Icons.photo_rounded, size: 50),
+          title: PlaceholderLines(count: 1, animate: true),
+          subtitle: PlaceholderLines(count: 1, animate: true),
+          trailing: FaIcon(FontAwesomeIcons.chevronRight, color: Colors.grey, size: 20)));
+
+  Widget _buildPlaceholderList() {
+    return ListView.separated(
+        separatorBuilder: (context, index) {
+          return const Divider(
+            indent: 20,
+            endIndent: 20,
+            thickness: 1,
+          );
+        },
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return _buildPlaceholderTile();
+        });
+  }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          iconSize: 24.0,
-          icon: const FaIcon(FontAwesomeIcons.chevronLeft, color: Colors.grey),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 5.0,
-        title: const Text(
-            'USARC Safety Links',
-            overflow: TextOverflow.fade,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black87,
-            )
-        ),
-      ),
-      body: ListView(
+      // appBar: ,
+      backgroundColor: Colors.white.withOpacity(0.5),
+      body: _buildPlaceholderList(),
+    );
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
         children: <Widget>[
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
-            child:  TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://www.usar.army.mil/USARSafety/'),
-              ),
-          ),
-          Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://xtranet/usarc/safety/default.aspx'),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://www.usar.army.mil/USARSafety/');
+              },
+              child: const Text('USARC Safety Public Site'),
             ),
           ),
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://safety.army.mil/ON-DUTY/Workplace/OSHA-Corner'),
-              ),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://xtranet/usarc/safety/default.aspx');
+              },
+              child: const Text('USARC Safety Xtranet Site'),
+            ),
           ),
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://phc.amedd.army.mil/topics/workplacehealth/ih/Pages/default.aspx'),
-              ),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://safety.army.mil/ON-DUTY/Workplace/OSHA-Corner');
+              },
+              child: const Text(
+                  'USARC Workplace Safety Site'),
+            ),
           ),
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://www.osha.gov/toxic-metals'),
-              ),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://phc.amedd.army.mil/topics/workplacehealth/ih/Pages/default.aspx');
+              },
+              child: const Text(
+                  'APHC Industrial Hygiene Site'),
+            ),
           ),
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://www.cdc.gov/niosh/topics/default.html'),
-              ),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://www.osha.gov/toxic-metals');
+              },
+              child: const Text('OSHA Heavy Metals Site'),
+            ),
           ),
           Container(
-            margin: new EdgeInsets.only(left: 30, right: 30),
+            margin: const EdgeInsets.only(left: 30, right: 30),
             child: TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue)
-                ),
-            onPressed: () {},
-            child: const Text('https://www.epa.gov/lead/learn-about-lead'),
-              ),
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://www.cdc.gov/niosh/topics/default.html');
+              },
+              child:
+                  const Text('NIOSH Workplace Topics Site'),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30),
+            child: TextButton(
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue)),
+              onPressed: () {
+                _launchURL('https://www.epa.gov/lead/learn-about-lead');
+              },
+              child: const Text('EPA Lead Site'),
+            ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
-
-

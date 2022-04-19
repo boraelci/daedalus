@@ -65,5 +65,10 @@
     <array>
         <string>_dartobservatory._tcp</string>
     </array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>https</string>
+      <string>http</string>
+    </array>
 </dict>
 </plist>
