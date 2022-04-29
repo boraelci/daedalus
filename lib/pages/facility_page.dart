@@ -35,24 +35,9 @@ class FacilityPage extends StatelessWidget {
             )
         ),
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
-          Container(
-            // height: 50,
-            margin: const EdgeInsets.only(top: 20.0),
-            child: Center(child: Text(
-               'Facility ID: ${facility.facid}'
-              )
-            )
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 30.0, right: 30.0,),
-            child: Center(child: Text(
-               '${facility.street}, ${facility.city}, ${facility.state}, ${facility.zip}'
-              )
-            )
-          ),
-          Center(child: IconButton(
+          IconButton(
               iconSize: 45,
               icon: facility.leadSeverity < 3
                   ? const FaIcon(FontAwesomeIcons.circleCheck,
@@ -60,14 +45,31 @@ class FacilityPage extends StatelessWidget {
                   : const FaIcon(FontAwesomeIcons.circleExclamation,
                   color: Colors.amber),
               onPressed: null
-            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30.0, right: 30.0,),
+            child: Center(child: Column(
+              children: [
+                Text(
+                    facility.siteName
+                ),
+                Text(
+                   facility.street
+                  ),
+                Text(
+                    '${facility.city}, ${facility.state} ${facility.zip}\n'
+                ),
+              ],
+            )
+            )
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Center(child: Text(
-              '${facility.siteName} is ${facility.leadSeverity < 3 ? "within" : "above"} permissible limits. ${facilityTexts[facility.leadSeverity]}')
+              '${facility.leadSeverity < 3 ? "Within" : "Above"} permissible limits. ${facilityTexts[facility.leadSeverity]}')
             )
           ),
+          /*
           Container(
             margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
             child: Center(child: Text(
@@ -75,7 +77,7 @@ class FacilityPage extends StatelessWidget {
               //style: TextStyle(color: facility.leadSeverity < 3 ? Colors.black : Colors.red)
               ),
             )
-          ),
+          ),*/
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Center(child: TextButton(

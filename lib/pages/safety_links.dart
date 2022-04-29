@@ -71,18 +71,6 @@ class SafetyLinks extends StatelessWidget {
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.blue)),
               onPressed: () {
-                _launchURL('https://xtranet/usarc/safety/default.aspx');
-              },
-              child: const Text('USARC Safety Xtranet Site'),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 30, right: 30),
-            child: TextButton(
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.blue)),
-              onPressed: () {
                 _launchURL('https://safety.army.mil/ON-DUTY/Workplace/OSHA-Corner');
               },
               child: const Text(

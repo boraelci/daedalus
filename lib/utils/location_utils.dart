@@ -7,11 +7,11 @@ import 'dart:io' show Platform;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_geofence/geofence.dart';
 
-const locationDeniedTitle = "Location denied!";
-const locationDeniedBody = "Need access when in use at least";
+const locationDeniedTitle = "Location permissions are missing.";
+const locationDeniedBody = "This app needs to access your location. Please go to your device settings and allow location permissions."; //When determining nearby facilities
 
-const locationAlwaysTitle = "Location not always!";
-const locationAlwaysBody = "Need access always";
+const locationAlwaysTitle = "Location permissions have to be updated.";
+const locationAlwaysBody = "This app needs to access your location in the background. Please go to 'Location Access For This App' in your device settings and select 'Allow all the time'. You may have to restart the app afterwards."; //For geolocation alert notifications
 
 Future<void> showLocationSettings(context, title, body, onSettingsPressed) async {
   showDialog<String>(
@@ -22,7 +22,7 @@ Future<void> showLocationSettings(context, title, body, onSettingsPressed) async
         content: Text(body),
         actions: <Widget>[
           TextButton(
-            onPressed: () { print('ya'); onSettingsPressed(); },
+            onPressed: () { onSettingsPressed(); },
             child: const Text('Go to Settings'),
           ),
           TextButton(
@@ -63,9 +63,7 @@ Future<Position> getUserLocation() async {
   return Future.error("Failed");
 }
 
-Future<List<Facility>> sortFacilities(permissionStatus) async {
-  List<Facility> facilities = [...allFacilities];
-  if (permissionStatus > 0) {
+Future<List<Facility>> sortFacilities(facilities) async {
     try {
       await getUserLocation().then((pos) {
         facilities.sort((a, b) {
@@ -76,10 +74,8 @@ Future<List<Facility>> sortFacilities(permissionStatus) async {
           return distanceForA.compareTo(distanceForB);
         });
       });
-    } catch (e) {
-    }
-  }
-  return facilities;
+    } catch (e) { ;  }
+    return facilities;
 }
 
 // Same for IOS and Android
@@ -90,10 +86,8 @@ Future<void> requestLocationWhenInUse() async {
 // Android: show dialog asking to allow always, On click allow run Permission.locationAlways.request();
 // iOS ask directly
 Future<void> requestLocationAlways(context) async {
-  print('always');
-  if (await Permission.locationAlways.isPermanentlyDenied) { print('e'); handleLocationDenied(context); }
+  if (await Permission.locationAlways.isPermanentlyDenied) { handleLocationDenied(context); }
   else {
-    print(await Permission.locationAlways.status);
     if (Platform.isAndroid) {
       showLocationSettings(context, locationAlwaysTitle, locationAlwaysBody, Permission.locationAlways.request);
     }
@@ -109,13 +103,11 @@ void handleLocationDenied(context) {
 }
 
 Future<int> getLocationPermissions(context, {curRetry = 0}) async {
-  print(await Permission.location.status);
   if (await Permission.locationAlways.isGranted) { return 2; }
   else if (await Permission.locationWhenInUse.isGranted) { await requestLocationAlways(context); }
   else if (await Permission.locationWhenInUse.isPermanentlyDenied){ handleLocationDenied(context); }
   else {
     if (curRetry < 1) {
-      print(curRetry);
       await requestLocationWhenInUse();
       return await getLocationPermissions(context, curRetry: (curRetry+1));
     }
@@ -127,19 +119,38 @@ Future<int> getLocationPermissions(context, {curRetry = 0}) async {
   else { return 0; }
 }
 
-void setupGeolocationAlerts(facilities, {radius = 100.0}) {
+void setupGeolocationAlerts(facilities, scheduleNotification, {radius = 500.0}) {
   Geofence.initialize();
-  // Geofence.getCurrentLocation().then((value) => print(value)).onError((error, stackTrace) => print(error)); // FOR DEBUGGING
 
   for (var facility in facilities.take(10)) {
     Geofence.addGeolocation(Geolocation(
         latitude: facility.lat,
         longitude: facility.long,
         radius: radius,
-        id: facility.facid), GeolocationEvent.entry).then((value) { print(facility.facid); });
+        id: facility.facid), GeolocationEvent.entry).then((value) { });
   }
 
   Geofence.startListening(GeolocationEvent.entry, (entry) {
-    print("Entry of a georegion Welcome to: ${entry.id}");
+    for (var facility in facilities) {
+      if (facility.facid == entry.id) {
+        scheduleNotification(facility);
+        break;
+      }
+    }
   });
 }
+
+/*
+void runPeriodicLocationCheck(facilities) {
+  Timer.periodic(Duration(seconds: 5), (timer) {
+    StreamSubscription<Position> positionStream =
+    Geolocator.getPositionStream(locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
+    ))
+        .listen((pos) {
+          print(Geolocator.distanceBetween(
+          pos.latitude, pos.longitude, facilities[0].lat, facilities[0].long));
+    });
+  });
+}*/

@@ -33,30 +33,12 @@ class _MapPageState extends State<MapPage> {
   List<Facility> facilities = [];
 
   final leadSeverityThreshold = 3;
-  final numFacilitiesToDisplay = 1000; // TODO CHANGE IN PROD
+  final numFacilitiesToDisplay = 1000; // upper limit
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-/*
-    Timer.periodic(Duration(seconds: 5), (timer) {
-      _updateUserLocation();
-    });
- */
-
-  }
-
-  void _updateUserLocation() async {
-    try {
-      await getUserLocation().then((loc) {
-        // do not wrap in setState
-        userLocation = LatLng(loc.latitude, loc.longitude);
-        print(userLocation);
-      });
-    }
-    catch(e) {
-    }
   }
 
   void _onMarkerTapped(int index) {
@@ -67,13 +49,6 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  /*
-  void fixLocation() {
-    List<Location> locations = await locationFromAddress(
-        facility.address);
-    point = LatLng(locations[0].latitude, locations[0].longitude);
-  }*/
-
   void _addMarkers(facilities) async {
     List<Marker> _markers = [];
     var counter = 0;
@@ -82,10 +57,8 @@ class _MapPageState extends State<MapPage> {
       try {
         var point = LatLng(facility.lat, facility.long);
         try {
-
         } catch (e){
-          print(facility.address);
-          print("Coordinates from address could not be found");
+          // print("Coordinates from address could not be found");
         }
         final Marker marker = Marker(
           width: 80.0,
@@ -110,7 +83,7 @@ class _MapPageState extends State<MapPage> {
         _markers.add(marker);
         counter += 1;
       } catch (e) {
-        print("Facilities and markers out of sync!");
+        // print("Facilities and markers out of sync!");
         continue;
       }
     }
@@ -218,21 +191,7 @@ class _MapPageState extends State<MapPage> {
         selectedTileColor: Colors.blueGrey.shade100.withOpacity(0.25),
         selectedColor: Colors.black,
         horizontalTitleGap: 12,
-        leading: IconButton(
-          iconSize: 45,
-          icon: facility.leadSeverity < leadSeverityThreshold
-              ? const FaIcon(FontAwesomeIcons.circleCheck,
-              color: Colors.green)
-              : const FaIcon(FontAwesomeIcons.circleExclamation,
-              color: Colors.amber),
-          onPressed: () {
-            setState(() {
-              _zoomCamera(index, 15.0);
-              _selectedIndex = index;
-            });
-            _showGuidelines(index);
-          }
-        ),
+        leading: iconButton(facility, index),
         title: Text(facility.siteName,
             overflow: TextOverflow.fade,
             softWrap: false,
@@ -256,14 +215,33 @@ class _MapPageState extends State<MapPage> {
                 _selectedIndex = index;
               });
               // _showGuidelines(index);
-              /*
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => FacilityPage(facility: facilities[index])),
-              );*/
+              );
             })),
   );
+
+  IconButton iconButton(Facility facility, int index) {
+    // switch case
+    return IconButton(
+        iconSize: 45,
+        icon: facility.leadSeverity < leadSeverityThreshold
+            ? const FaIcon(FontAwesomeIcons.circleCheck,
+            color: Colors.green)
+            : const FaIcon(FontAwesomeIcons.circleExclamation,
+            color: Colors.amber),
+        onPressed: () {
+          setState(() {
+            _zoomCamera(index, 15.0);
+            _selectedIndex = index;
+          });
+          _showGuidelines(index);
+        }
+      );
+  }
 
   Widget _buildList() {
     return ListView.builder(
