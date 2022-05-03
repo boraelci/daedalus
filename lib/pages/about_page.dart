@@ -32,6 +32,22 @@ class AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();
+    getNotificationFrequencyIndex().then((value) { selectedFrequency = value.toDouble();});
+  }
+
+  Future<int> getNotificationFrequencyIndex () async {
+    int frequencyIndex = selectedFrequency.toInt();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? previouslySelectedFrequencyInMins = prefs.getInt('notificationFrequency');
+    if (previouslySelectedFrequencyInMins != null) {
+      for (var mins in frequenciesInMinutes) {
+        if (previouslySelectedFrequencyInMins == mins) {
+          frequencyIndex = mins;
+          break;
+        }
+      }
+    }
+    return frequencyIndex;
   }
 
   void setNotificationFrequency (index) async {

@@ -24,17 +24,27 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final String apiURL =
+  final String facilitiesURL =
       "https://daedalus-api-ziliqkhbea-uc.a.run.app/facilitymocks";
+
+  final String safetyMessagesURL = "link";
+
+
+  // (thresholdLevel), [(leve, message), (level, message)]
+
   List<Facility> facilities = [];
 
   NotificationService notificationService = NotificationService();
+
+  late String thresholdLevel;
+  late String safetyLevelAndMessages;
 
   @override
   void initState() {
     super.initState();
 
-    getFacilities(apiURL).then((unsorted) {
+    getFacilities(facilitiesURL).then((unsorted) {
+      // getSafetyMessages(safetyMessagesURL);
       getLocationPermissions(context).then((permissionStatus) {
         if (permissionStatus > 0) {
           sortFacilities(unsorted).then((sorted) {
@@ -61,6 +71,26 @@ class _MainAppState extends State<MainApp> {
       facilities = input;
     });
   }
+
+  /*
+
+  Future<void> getSafetyMessages(URL) async {
+
+    Response res = await get(Uri.parse(URL));
+
+    if (res.statusCode == 200) {
+      var body = jsonDecode(res.body);
+
+      thresholdLevel = body['thresholdLevel']; // threshold
+      safetyLevelAndMessages = body['safetyLevelsAndMessages']; // {"1": "";}
+
+      print(thresholdLevel);
+      print(safetyLevelAndMessages);
+
+    } else {
+      print("Error connecting to server");
+    }
+  } */
 
   Future<List<Facility>> getFacilities(apiURL) async {
 
